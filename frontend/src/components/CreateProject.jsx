@@ -26,6 +26,17 @@ export default function CreateProject() {
   });
   const formRef = React.useRef(null);
 
+  //changes
+  const validateEstimatedDate = (_, value) => {
+    const assignedDate = formRef.current.getFieldValue("assignedDate");
+
+    if (value && assignedDate && value.isBefore(assignedDate)) {
+      return Promise.reject("Estimated Date must be after Assigned Date");
+    }
+
+    return Promise.resolve();
+  };
+
   const handleSubmit = () => {
     const formValues = formRef.current.getFieldsValue();
     const { projectTitle, assignedDate, estimatedDate } = formValues;
@@ -34,7 +45,7 @@ export default function CreateProject() {
       projectTitle,
       assignedDate: assignedDate.format("YYYY-MM-DD"),
       estimatedDate: estimatedDate.format("YYYY-MM-DD"),
-      assignedEmployees:project.assignedEmployees
+      assignedEmployees: project.assignedEmployees,
     });
 
     console.log("Project Data:", project);
@@ -76,11 +87,10 @@ export default function CreateProject() {
               <DatePicker onChange={(e, date) => {}} />
             </Form.Item>
             <Form.Item
+              //changes
               name="estimatedDate"
               label="Estimated Date"
-              rules={[
-                { required: true, message: "Please select an estimated date" },
-              ]}
+              rules={[{ required: true }, { validator: validateEstimatedDate }]}
             >
               <DatePicker onChange={(e, date) => {}} />
             </Form.Item>
